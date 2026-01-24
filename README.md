@@ -12,7 +12,7 @@ The project demonstrates core Object-Oriented Programming principles:
 
 
 ## 2. JDBC & Database Layer
-* **Working JDBC Connection**: The system connects to a PostgreSQL database named `simpledb` using the `DriverManager`.
+* **Working JDBC Connection**: The system connects to a PostgreSQL database named `musicdb` using the `DriverManager`.
 * **CRUD with PreparedStatement**: Database interactions use `PreparedStatement` to prevent SQL injection and ensure secure data handling.
 * **SQL Schema**: The database uses a `SERIAL` primary key for automated ID management.
 
