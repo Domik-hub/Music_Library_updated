@@ -1,36 +1,50 @@
-
 import controller.MediaController;
-import model.*;
+import model.Playlist;
+import repository.MediaRepository;
 import service.MediaService;
+import model.Song;
+import model.Media;
+import utils.ReflectionUtils;
+import exception.InvalidInputException;
+import utils.SortingUtils;
+
 import java.util.List;
 
 public class Main {
-    public static void main(String[] args) {
-        MediaController controller = new MediaController();
+    public static void main(String[] args) throws Exception {
+        MediaRepository repo = new MediaRepository();
+        MediaService service = new MediaService(repo);
+        MediaController controller = new MediaController(service);
 
-        Playlist myPlaylist = new Playlist();
 
-        Media mySong = new Song(0, "505 - Arctic Monkeys");
-        Media myPodcast = new Podcast(0, "Tech Talk");
+        Song testSong = new Song(0, "Reflection Track", "Java Artist");
+        ReflectionUtils.printClassInfo(testSong);
+        testSong.stop();
 
-        myPlaylist.add(mySong);
-        myPlaylist.add(myPodcast);
+        List<Media> allMedia = repo.getAll();
 
-        myPlaylist.playAll();
+        SortingUtils.sortByTitle(allMedia);
 
-        MediaService service = new MediaService();
+        allMedia.forEach(m -> System.out.println(m.getTitle()));
+
+        Playlist gymPlaylist = new Playlist(1, "Workout Mix");
+
+        gymPlaylist.addMedia(new Song(101, "Stronger", "Kanye West"));
+        gymPlaylist.addMedia(new Song(102, "All of the Lights", "Kanye West"));
+
+        gymPlaylist.sortPlaylist();
+
+        System.out.println("Playlist: " + gymPlaylist.getName());
+        gymPlaylist.getMediaList().forEach(m -> System.out.println(" - " + m.getTitle()));
         try {
-            service.processMedia(mySong);
-            service.processMedia(myPodcast);
+            System.out.println("Attempting to save song with empty title...");
+            service.processMedia(new Song(0, "", "Unknown"));
+        } catch (InvalidInputException e) {
+            System.out.println("Caught expected validation error: " + e.getMessage());
         } catch (Exception e) {
-            System.err.println("Database Error: " + e.getMessage());
+            System.out.println("Unexpected error: " + e.getMessage());
         }
 
-        try {
-            Media brokenPodcast = new Podcast(0, "A");
-            service.processMedia(brokenPodcast);
-        } catch (Exception e) {
-            System.out.println("Caught expected error: " + e.getMessage());
-        }
+        controller.run();
     }
 }
