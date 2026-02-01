@@ -1,35 +1,48 @@
-# Music Library Management System
+# 🎵 Music Library Management System
 
-## 1. OOP Implementation 
-The project demonstrates core Object-Oriented Programming principles:
-* **Abstract Class & Inheritance**: 
-* The `Media` abstract class serves as a template for `Song` and `Podcast` classes, sharing common attributes like `id` and `title`.
-* **Interfaces & Polymorphism**: 
-* Implemented `Playable` and `Validatable` interfaces. Polymorphism is used in the`Playlist` class to process different media types through a single `playAll()` method.
-* **Encapsulation**: Fields are kept `protected` or `private`, and access is managed via public getters and setters to ensure data integrity.
-* **Composition**: The `Playlist` class manages a `List<Media>`, demonstrating a "has-a" relationship.
+## 📋 Project Overview
+A robust information system for managing a personal music library (Songs and Podcasts). The project follows a strict **N-tier architecture** with a clear separation of concerns between UI, Business Logic, and Data Access layers.
 
+---
 
+## 🛠 Implemented Requirements
 
-## 2. JDBC & Database Layer
-* **Working JDBC Connection**: The system connects to a PostgreSQL database named `musicdb` using the `DriverManager`.
-* **CRUD with PreparedStatement**: Database interactions use `PreparedStatement` to prevent SQL injection and ensure secure data handling.
-* **SQL Schema**: The database uses a `SERIAL` primary key for automated ID management.
+### 1. Object-Oriented Programming (OOP)
+* **Inheritance & Abstraction**: Utilizes an abstract base class `Media` with specialized subclasses `Song` and `Podcast`.
+* **Interfaces**: Implements `Playable` and `Validatable` to define consistent object behaviors.
+* **Polymorphism**: Unified processing of different media types within the service layer.
 
-## 3. API & Business Logic 
-* **Layered Architecture**: The code is organized into Controller, Service, and Repository layers to separate concerns.
-* **Validation & Business Rules**: The `Validatable` interface triggers checks before any data is sent to the repository.
+### 2. SOLID Architecture
+* **Controller**: Manages user interaction and console I/O.
+* **Service**: Handles business logic, duplicate resource checks, and data validation.
+* **Repository**: Direct data access via JDBC to a PostgreSQL database.
+* **Dependency Injection**: Dependencies are injected through constructors to follow the Dependency Inversion Principle (DIP).
 
+### 3. Advanced Java Features
+* **Generics**: Implementation of generic methods in utility classes and repository patterns.
+* **Lambdas**: List sorting implemented via lambda expressions in `SortingUtils`.
+* **Reflection API**: Dynamic metadata analysis of classes performed in `ReflectionUtils`.
+* **Custom Exception Handling**: A specialized hierarchy of exceptions for validation and database errors.
 
+---
 
-## 4. Exception Handling 
-* **Custom Exception Hierarchy**: The project uses custom exceptions like `InvalidInputException` to handle specific runtime errors.
+## 🗄 Database Schema (PostgreSQL)
+The system persists data using the following `media` table structure:
 
-## 5. Setup Instructions
-1. Create the table in **pgAdmin**:
 ```sql
+CREATE TABLE playlists (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL
+);
+
 CREATE TABLE media (
     id SERIAL PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
-    type VARCHAR(50) NOT NULL
+    artist VARCHAR(100), 
+    type VARCHAR(50) NOT NULL, 
+    playlist_id INTEGER, 
+    CONSTRAINT fk_playlist
+      FOREIGN KEY(playlist_id) 
+      REFERENCES playlists(id)
+      ON DELETE SET NULL
 );
